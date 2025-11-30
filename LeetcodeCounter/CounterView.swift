@@ -8,7 +8,7 @@
 import SwiftUI
 import UserNotifications
 
-// Wrapper view that forces recreation when counter changes
+// Wrapper view for counter display
 struct CounterViewWrapper: View {
     @ObservedObject var counterStore: CounterStore
     @ObservedObject var themeManager: ThemeManager
@@ -20,7 +20,8 @@ struct CounterViewWrapper: View {
             themeManager: themeManager,
             accessibilityManager: accessibilityManager
         )
-        .id(counterStore.count) // Force recreation when count changes
+        // Removed .id() modifier - let SwiftUI handle updates efficiently
+        // This prevents unnecessary view recreation and reduces CPU usage
     }
 }
 
@@ -33,10 +34,7 @@ struct CounterView: View {
     @State private var minusButtonPressed = false
     
     var body: some View {
-        // Force view to rebuild when counter changes by using the count as identity
-        let _ = print("⚪ [CounterView] body computed with count: \(counterStore.count)")
-        
-        return ZStack {
+        ZStack {
             // Background
             themeManager.backgroundColor
                 .ignoresSafeArea()
@@ -128,42 +126,16 @@ struct CounterView: View {
     }
     
     private func handleIncrement() {
-        print("🔵 [CounterView] handleIncrement() called")
-        print("🔵 [CounterView] Current count before: \(counterStore.count)")
-        
-        // Debug notification
-        showDebugNotification(title: "Button Clicked", message: "Increment button was clicked! Current count: \(counterStore.count)")
-        
-        print("🔵 [CounterView] Calling counterStore.increment()")
+        // Removed debug prints and notifications to reduce CPU usage
         counterStore.increment()
-        print("🔵 [CounterView] Count after increment call: \(counterStore.count)")
     }
     
     private func handleDecrement() {
-        print("🔴 [CounterView] handleDecrement() called")
-        print("🔴 [CounterView] Current count before: \(counterStore.count)")
-        
-        // Debug notification
-        showDebugNotification(title: "Button Clicked", message: "Decrement button was clicked! Current count: \(counterStore.count)")
-        
-        print("🔴 [CounterView] Calling counterStore.decrement()")
+        // Removed debug prints and notifications to reduce CPU usage
         counterStore.decrement()
-        print("🔴 [CounterView] Count after decrement call: \(counterStore.count)")
     }
     
-    private func showDebugNotification(title: String, message: String) {
-        let content = UNMutableNotificationContent()
-        content.title = title
-        content.body = message
-        content.sound = .default
-        
-        let request = UNNotificationRequest(identifier: UUID().uuidString, content: content, trigger: nil)
-        UNUserNotificationCenter.current().add(request) { error in
-            if let error = error {
-                print("Failed to show debug notification: \(error)")
-            }
-        }
-    }
+    // Removed showDebugNotification - was causing unnecessary CPU usage on every click
     
     private func triggerCelebration() {
         showCelebration = true

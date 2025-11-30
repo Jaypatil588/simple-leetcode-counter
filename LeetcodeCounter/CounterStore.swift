@@ -48,55 +48,23 @@ class CounterStore: ObservableObject {
     }
     
     func increment() {
-        print("🟢 [CounterStore] increment() called")
-        print("🟢 [CounterStore] Current count: \(count)")
-        
         // Save current value to backup before updating
         UserDefaults.standard.set(count, forKey: backupKey)
         
-        // Notify observers BEFORE changing the value (SwiftUI best practice)
-        print("🟢 [CounterStore] Sending objectWillChange (before)")
-        objectWillChange.send()
-        
         // Update synchronously (we're already on main thread from button action)
+        // @Published property wrapper automatically sends objectWillChange when count changes
         count += 1
-        print("🟢 [CounterStore] Count updated to: \(count)")
         saveCounter()
-        
-        print("🟢 [CounterStore] Incremented to \(count)")
-        
-        // Force another notification to ensure all views update
-        DispatchQueue.main.async { [weak self] in
-            guard let self = self else { return }
-            print("🟢 [CounterStore] Sending objectWillChange (after async)")
-            self.objectWillChange.send()
-        }
     }
     
     func decrement() {
-        print("🟡 [CounterStore] decrement() called")
-        print("🟡 [CounterStore] Current count: \(count)")
-        
         // Save current value to backup before updating
         UserDefaults.standard.set(count, forKey: backupKey)
         
-        // Notify observers BEFORE changing the value (SwiftUI best practice)
-        print("🟡 [CounterStore] Sending objectWillChange (before)")
-        objectWillChange.send()
-        
         // Update synchronously (we're already on main thread from button action)
+        // @Published property wrapper automatically sends objectWillChange when count changes
         count -= 1
-        print("🟡 [CounterStore] Count updated to: \(count)")
         saveCounter()
-        
-        print("🟡 [CounterStore] Decremented to \(count)")
-        
-        // Force another notification to ensure all views update
-        DispatchQueue.main.async { [weak self] in
-            guard let self = self else { return }
-            print("🟡 [CounterStore] Sending objectWillChange (after async)")
-            self.objectWillChange.send()
-        }
     }
     
     private func saveCounter() {

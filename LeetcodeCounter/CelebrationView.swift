@@ -16,7 +16,7 @@ struct CelebrationView: View {
                 Circle()
                     .fill(particle.color)
                     .frame(width: particle.size, height: particle.size)
-                    .position(particle.position)Value of type 'NSResponder' has no member 'needsDisplay'
+                    .position(particle.position)
                     .opacity(particle.opacity)
             }
         }
