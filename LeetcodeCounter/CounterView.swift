@@ -32,6 +32,7 @@ struct CounterView: View {
     @State private var showCelebration = false
     @State private var plusButtonPressed = false
     @State private var minusButtonPressed = false
+    @State private var isCommandKeyPressed = false
     
     var body: some View {
         ZStack {
@@ -41,9 +42,9 @@ struct CounterView: View {
             
             VStack(spacing: 40) {
                 // Counter Display
-                Text("\(counterStore.count) / 500")
+                Text("\(counterStore.count) / 500 | \(counterStore.revisionCount)")
                     .font(.system(size: 96, weight: .bold, design: .default))
-                    .foregroundColor(themeManager.textColor)
+                    .foregroundColor(isCommandKeyPressed ? themeManager.textColor.opacity(0.7) : themeManager.textColor)
                     .monospacedDigit()
                 
                 // Buttons
@@ -121,18 +122,32 @@ struct CounterView: View {
                 // Handle authorization result if needed
             }
             
+            // Monitor Command key state
+            NSEvent.addLocalMonitorForEvents(matching: .flagsChanged) { event in
+                isCommandKeyPressed = event.modifierFlags.contains(.command)
+                return event
+            }
+            
             // Accessibility permission check removed - desktop-level windows don't need it for button clicks
         }
     }
     
     private func handleIncrement() {
         // Removed debug prints and notifications to reduce CPU usage
-        counterStore.increment()
+        if isCommandKeyPressed {
+            counterStore.incrementRevision()
+        } else {
+            counterStore.increment()
+        }
     }
     
     private func handleDecrement() {
         // Removed debug prints and notifications to reduce CPU usage
-        counterStore.decrement()
+        if isCommandKeyPressed {
+            counterStore.decrementRevision()
+        } else {
+            counterStore.decrement()
+        }
     }
     
     // Removed showDebugNotification - was causing unnecessary CPU usage on every click

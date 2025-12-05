@@ -40,3 +40,7 @@ open "$APP_PATH"
 
 echo "✅ App launched! You can close this terminal window."
 echo "📍 App location: $APP_PATH"
+
+
+
+
